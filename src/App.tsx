@@ -20,7 +20,7 @@ const HOPE_EXCHANGE_CLINIC = "Hope Exchange Community Clinic";
 
 const copy = {
   en: {
-    welcome: "Healthcare information made accessible to everyone.",
+    welcome: "Hello",
     intro: "A little support can make a big difference. Find clinic information, keep track of appointments and get clear answers in your language.",
     beneficiary: "Continue as a beneficiary", staff: "Continue as staff", safe: "A safe, welcoming place to find your next step.",
     home: "Home", assistant: "AI Assistant", appointments: "Appointments", reminders: "Medication reminders",
@@ -47,7 +47,7 @@ const copy = {
     recording: "Listening… tap to stop", record: "Speak your question", speakButton: "Speak", listening: "Listening…", listeningPrompt: "Speak now — your words will appear here", chatClear: "Start a new conversation", consent: "By entering the demo, you agree to use fictional information only. This is not a real healthcare record.",
   },
   af: {
-    welcome: "Gesondheidsinligting, toeganklik vir almal.",
+    welcome: "Hallo",
     intro: "Klein ondersteuning kan 'n groot verskil maak. Vind kliniekinligting, hou afsprake dop en kry duidelike antwoorde in jou taal.",
     beneficiary: "Gaan voort as 'n pasiënt", staff: "Gaan voort as personeel", safe: "’n Veilige, verwelkomende plek om jou volgende stap te vind.",
     home: "Tuis", assistant: "KI-assistent", appointments: "Afsprake", reminders: "Medikasieherinneringe",
@@ -74,7 +74,7 @@ const copy = {
     recording: "Luister… tik om te stop", record: "Spreek jou vraag", speakButton: "Praat", listening: "Luister…", listeningPrompt: "Praat nou — jou woorde sal hier verskyn", chatClear: "Begin 'n nuwe gesprek", consent: "Gebruik slegs fiktiewe inligting. Dit is nie 'n werklike gesondheidsrekord nie.",
   },
   xh: {
-    welcome: "Ulwazi lwezempilo olufikeleleka kuye wonke umntu.",
+    welcome: "Molo",
     intro: "Uncedo oluncinci lunokwenza umahluko omkhulu. Fumana iinkcukacha zekliniki, ulandele amadinga, uze ufumane iimpendulo ngolwimi lwakho.",
     beneficiary: "Qhubeka njengomntu ofumana uncedo", staff: "Qhubeka njengomsebenzi", safe: "Indawo ekhuselekileyo yokufumana inyathelo lakho elilandelayo.",
     home: "Ekhaya", assistant: "Umncedisi we-AI", appointments: "Amadinga", reminders: "Izikhumbuzo zamayeza",
@@ -431,21 +431,19 @@ function Landing({ language, setLanguage, enter, recording, toggleLandingVoice }
   return <div className="landing">
     <header className="landing-header"><Logo /><div className="landing-header-actions"><button type="button" className={`landing-mic-button ${recording ? "recording" : ""}`} aria-label={recording ? t.recording : t.record} title={recording ? t.recording : t.record} onClick={toggleLandingVoice}>{recording ? <MicOff size={19} /> : <Mic size={19} />}</button><SelectLanguage value={language} onChange={setLanguage} /></div></header>
     <main className="landing-content">
-      <section className="hero-copy"><div className="eyebrow"><span className="eyebrow-dot" /> COMMUNITY CARE, CLOSER</div><h1>{t.welcome}</h1><p>{t.intro}</p><div className="trust-line"><ShieldCheck size={17} />{t.safe}</div>
+      <section className="hero-copy"><h1>{t.welcome}</h1>
         <div className="entry-cards">
-          <button className="entry-card beneficiary-entry" onClick={() => enter("beneficiary")}><span className="entry-icon"><HeartHandshake size={23} /></span><span className="entry-text"><b>{t.beneficiary}</b><small>Explore your appointments, reminders and health information.</small></span><ArrowRight size={20} /></button>
-          <button className="entry-card staff-entry" onClick={() => enter("staff")}><span className="entry-icon"><Stethoscope size={22} /></span><span className="entry-text"><b>{t.staff}</b><small>Open the community care team's workspace and reports.</small></span><ArrowRight size={20} /></button>
+          <button className="entry-card beneficiary-entry" onClick={() => enter("beneficiary")}><span className="entry-icon"><HeartHandshake size={23} /></span><span className="entry-text"><b>{t.beneficiary}</b></span><ArrowRight size={20} /></button>
+          <button className="entry-card staff-entry" onClick={() => enter("staff")}><span className="entry-icon"><Stethoscope size={22} /></span><span className="entry-text"><b>{t.staff}</b></span><ArrowRight size={20} /></button>
         </div>
-        <p className="demo-hint"><Sparkles size={16} /> No sign-in needed · choose a demo experience to explore</p>
       </section>
-      <section className="hero-art" aria-label="HopeCare community care illustration">
+      {/* Landing illustration removed to keep the entry screen focused. */}{false && <section className="hero-art" aria-label="HopeCare community care illustration">
         <div className="hero-orbit orbit-one" /><div className="hero-orbit orbit-two" />
         <div className="hero-circle"><div className="sun-shape" /><div className="hill hill-back" /><div className="hill hill-front" /><div className="art-person person-one"><span className="head" /><span className="body" /></div><div className="art-person person-two"><span className="head" /><span className="body" /></div><div className="art-person person-three"><span className="head" /><span className="body" /></div><div className="art-heart"><Heart size={19} fill="currentColor" /></div></div>
         <div className="floating-note note-top"><span><CalendarDays size={17} /></span><div><b>A little more support</b><small>One step at a time</small></div></div>
         <div className="floating-note note-bottom"><span className="note-green"><MessageCircle size={17} /></span><div><b>Here in your language</b><small>English · Afrikaans · isiXhosa</small></div></div>
-      </section>
+      </section>}
     </main>
-    <footer className="landing-footer"><span>© The Hope Exchange · HopeCare AI Demo</span><span><ShieldCheck size={14} /> {t.consent}</span></footer>
   </div>;
 }
 
