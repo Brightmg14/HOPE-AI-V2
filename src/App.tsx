@@ -44,7 +44,7 @@ const copy = {
     disclaimer: "HopeCare shares general information only. It cannot diagnose, prescribe, or replace a healthcare worker. For personal medical advice, please speak with a clinic professional.",
     simulation: "Demo simulation · no messages are sent", privacy: "Fictional demo records only. Your choices stay in this browser.",
     listen: "Listen to answer", stop: "Stop speaking", voiceUnsupported: "Voice features are not supported in this browser. You can still type or read replies.",
-    recording: "Listening… tap to stop", record: "Speak your question", chatClear: "Start a new conversation", consent: "By entering the demo, you agree to use fictional information only. This is not a real healthcare record.",
+    recording: "Listening… tap to stop", record: "Speak your question", speakButton: "Speak", listening: "Listening…", listeningPrompt: "Speak now — your words will appear here", chatClear: "Start a new conversation", consent: "By entering the demo, you agree to use fictional information only. This is not a real healthcare record.",
   },
   af: {
     welcome: "Gesondheidsinligting, toeganklik vir almal.",
@@ -71,7 +71,7 @@ const copy = {
     disclaimer: "HopeCare deel slegs algemene inligting. Dit kan nie diagnoseer of medisyne voorskryf nie. Praat met 'n kliniekwerker vir persoonlike advies.",
     simulation: "Demo-simulasie · geen boodskappe word gestuur nie", privacy: "Slegs fiktiewe demorekords. Jou keuses bly in hierdie blaaier.",
     listen: "Luister na antwoord", stop: "Hou op praat", voiceUnsupported: "Stemfunksies word nie deur hierdie blaaier ondersteun nie. Jy kan steeds tik of lees.",
-    recording: "Luister… tik om te stop", record: "Spreek jou vraag", chatClear: "Begin 'n nuwe gesprek", consent: "Gebruik slegs fiktiewe inligting. Dit is nie 'n werklike gesondheidsrekord nie.",
+    recording: "Luister… tik om te stop", record: "Spreek jou vraag", speakButton: "Praat", listening: "Luister…", listeningPrompt: "Praat nou — jou woorde sal hier verskyn", chatClear: "Begin 'n nuwe gesprek", consent: "Gebruik slegs fiktiewe inligting. Dit is nie 'n werklike gesondheidsrekord nie.",
   },
   xh: {
     welcome: "Ulwazi lwezempilo olufikeleleka kuye wonke umntu.",
@@ -98,7 +98,7 @@ const copy = {
     disclaimer: "IHopeCare inika ulwazi ngokubanzi kuphela. Ayikwazi ukuxilonga okanye ukumisela amayeza. Thetha nomsebenzi wezempilo ngeengcebiso zakho.",
     simulation: "Umboniso wokulinganisa · akukho miyalezo ithunyelwayo", privacy: "Iirekhodi zomzekelo ezingezizo ezokwenyani kuphela. Iinkcukacha zigcinwa kule bhrawuza.",
     listen: "Mamela impendulo", stop: "Yeka ukuthetha", voiceUnsupported: "Esi sikhangeli asixhasi ilizwi. Usenokuchwetheza okanye ufunde iimpendulo.",
-    recording: "Kumameliwe… cofa ukuze uyeke", record: "Thetha umbuzo wakho", chatClear: "Qalisa incoko entsha", consent: "Sebenzisa iinkcukacha zomzekelo kuphela. Le asiyorekhodi yokwenyani yezempilo.",
+    recording: "Kumameliwe… cofa ukuze uyeke", record: "Thetha umbuzo wakho", speakButton: "Thetha", listening: "Kumameliwe…", listeningPrompt: "Thetha ngoku — amazwi akho aza kuvela apha", chatClear: "Qalisa incoko entsha", consent: "Sebenzisa iinkcukacha zomzekelo kuphela. Le asiyorekhodi yokwenyani yezempilo.",
   },
 } as const;
 
@@ -263,7 +263,7 @@ function App() {
       setThinking(false);
     }, 750);
   }
-  function toggleVoice(onTranscript?: (text: string) => void) {
+  function toggleVoice() {
     const speechWindow = window as Window & {
       SpeechRecognition?: new () => RecognitionLike;
       webkitSpeechRecognition?: new () => RecognitionLike;
@@ -277,13 +277,15 @@ function App() {
     }
     const recognition = new Speech();
     recognitionRef.current = recognition;
+    const startingQuestion = question.trim();
     recognition.lang = language === "af" ? "af-ZA" : language === "xh" ? "xh-ZA" : "en-ZA";
-    recognition.interimResults = false;
+    recognition.interimResults = true;
     recognition.onresult = (event) => {
-      const transcript = event.results?.[0]?.[0]?.transcript;
-      if (!transcript) return;
-      if (onTranscript) onTranscript(transcript);
-      else sendMessage(transcript);
+      const transcript = Array.from(event.results ?? [])
+        .map((result) => result[0]?.transcript ?? "")
+        .join("")
+        .trim();
+      if (transcript) setQuestion([startingQuestion, transcript].filter(Boolean).join(" "));
     };
     recognition.onerror = () => { setRecording(false); showToast(t.voiceUnsupported); };
     recognition.onend = () => { setRecording(false); recognitionRef.current = null; };
@@ -364,11 +366,11 @@ function App() {
     showToast("Fictional demo report downloaded.");
   }
 
-  if (!role) return <Landing language={language} setLanguage={setLanguage} enter={enter} recording={recording} toggleLandingVoice={() => toggleVoice((transcript) => {
+  if (!role) return <Landing language={language} setLanguage={setLanguage} enter={enter} recording={recording} toggleLandingVoice={() => {
     setRole("beneficiary");
     setPage("assistant");
-    sendMessage(transcript);
-  })} />;
+    toggleVoice();
+  }} />;
 
   const staffPage = role === "staff";
   const pageTitle = labels[page];
@@ -481,8 +483,8 @@ function AssistantPage({ t, language, chat, setChat, question, setQuestion, send
         </div>
         <div className="suggested"><small>{t.quick}</small><div>{prompts.slice(0, 4).map((prompt) => <button key={prompt} onClick={() => sendMessage(prompt)}>{prompt}</button>)}</div></div>
         <form className="chat-compose" onSubmit={(e) => { e.preventDefault(); sendMessage(); }}>
-          <button type="button" className={`mic-button ${recording ? "recording" : ""}`} aria-label={recording ? t.recording : t.record} title={recording ? t.recording : t.record} onClick={toggleVoice}>{recording ? <MicOff size={20} /> : <Mic size={20} />}</button>
-          <input value={question} onChange={(e) => setQuestion(e.target.value)} placeholder={t.ask} aria-label={t.ask} />
+          <button type="button" className={`mic-button ${recording ? "recording" : ""}`} aria-label={recording ? t.recording : t.record} aria-pressed={recording} title={recording ? t.recording : t.record} onClick={toggleVoice}>{recording ? <MicOff size={20} /> : <Mic size={20} />}<span aria-live="polite">{recording ? t.listening : t.speakButton}</span></button>
+          <input value={question} onChange={(e) => setQuestion(e.target.value)} placeholder={recording ? t.listeningPrompt : t.ask} aria-label={t.ask} />
           <button className="send-button" type="submit" disabled={!question.trim() || thinking} aria-label={t.send}><Send size={18} /></button>
         </form>
         <div className="chat-footer"><span><ShieldCheck size={14} /> {t.disclaimer}</span><span>{t.simulation}</span></div>
