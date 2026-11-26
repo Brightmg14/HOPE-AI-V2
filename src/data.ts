@@ -30,9 +30,9 @@ export const initialAppointments: Appointment[] = [
 
 export const initialReminders: Reminder[] = [
   { id: "RM-301", beneficiaryId: "HC-1042", kind: "Appointment", date: "2026-11-25", message: "Your wellness check is tomorrow at 09:00.", status: "Acknowledged" },
-  { id: "RM-302", beneficiaryId: "HC-1043", kind: "Appointment", date: "2026-11-25", message: "Your clinic visit is tomorrow at 10:30.", status: "Sent" },
+  { id: "RM-302", beneficiaryId: "HC-1043", kind: "Appointment", date: "2026-11-25", message: "Your clinic visit is tomorrow at 10:30.", status: "Acknowledged" },
   { id: "RM-303", beneficiaryId: "HC-1044", kind: "Medication", date: "2026-11-26", message: "A medication collection is planned for tomorrow.", status: "Scheduled" },
-  { id: "RM-304", beneficiaryId: "HC-1045", kind: "Appointment", date: "2026-11-26", message: "Your family health visit is tomorrow at 11:00.", status: "Sent" },
+  { id: "RM-304", beneficiaryId: "HC-1045", kind: "Appointment", date: "2026-11-26", message: "Your family health visit is tomorrow at 11:00.", status: "Acknowledged" },
   { id: "RM-305", beneficiaryId: "HC-1046", kind: "Medication", date: "2026-11-26", message: "Please check your clinic card for collection details.", status: "Scheduled" },
 ];
 
