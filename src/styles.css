@@ -489,6 +489,8 @@ button:disabled { cursor: not-allowed; opacity: .48; }
 /* Dialog and toast */
 .modal-backdrop { position: fixed; z-index: 60; inset: 0; display: grid; place-items: center; padding: 18px; background: #1c342f72; backdrop-filter: blur(3px); }
 .data-modal { width: min(590px, 100%); max-height: min(86vh, 760px); overflow: auto; padding: 20px; border: 1px solid #e6ede8; border-radius: 15px; background: #fff; box-shadow: 0 22px 65px #142c2440; animation: modal-in .16s ease-out; }
+.login-modal { width: min(430px, 100%); }
+.login-fields { display: grid; gap: 12px; }
 @keyframes modal-in { from { opacity: 0; transform: translateY(7px) scale(.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
 .modal-heading { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 17px; }
 .modal-heading h2 { margin: 6px 0 0; color: #3d594d; font-size: 17px; letter-spacing: -.3px; }

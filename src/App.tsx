@@ -200,6 +200,7 @@ function App() {
   const [activeBeneficiary, setActiveBeneficiary] = useStored<string>("activeBeneficiary", "HC-1042");
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
+  const [loginRole, setLoginRole] = useState<Role | null>(null);
   const [historyBeneficiary, setHistoryBeneficiary] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [modal, setModal] = useState<"beneficiary" | "appointment" | "reminder" | "event" | null>(null);
@@ -251,7 +252,7 @@ function App() {
     if (!beneficiaries.length) setBeneficiaries(initialBeneficiaries);
     setRole(nextRole); setPage(nextRole === "staff" ? "dashboard" : "home");
   };
-  const signOut = () => { setRole(null); setPage("home"); setMobileOpen(false); };
+  const signOut = () => { setRole(null); setLoginRole(null); setPage("home"); setMobileOpen(false); };
 
   function sendMessage(message = question) {
     const text = message.trim();
@@ -368,11 +369,11 @@ function App() {
     showToast("Fictional demo report downloaded.");
   }
 
-  if (!role) return <Landing language={language} setLanguage={setLanguage} enter={enter} recording={recording} toggleLandingVoice={() => toggleVoice((transcript) => {
+  if (!role) return <><Landing language={language} setLanguage={setLanguage} onLogin={(nextRole) => setLoginRole(nextRole)} recording={recording} toggleLandingVoice={() => toggleVoice((transcript) => {
     setRole("beneficiary");
     setPage("assistant");
     sendMessage(transcript);
-  })} />;
+  })} />{loginRole && <LoginModal role={loginRole} onClose={() => setLoginRole(null)} onLogin={() => { enter(loginRole); setLoginRole(null); }} />}</>;
 
   const staffPage = role === "staff";
   const pageTitle = labels[page];
@@ -418,10 +419,10 @@ function App() {
   );
 }
 
-function Landing({ language, setLanguage, enter, recording, toggleLandingVoice }: {
+function Landing({ language, setLanguage, onLogin, recording, toggleLandingVoice }: {
   language: Language;
   setLanguage: (v: Language) => void;
-  enter: (r: Role) => void;
+  onLogin: (r: Role) => void;
   recording: boolean;
   toggleLandingVoice: () => void;
 }) {
@@ -431,10 +432,10 @@ function Landing({ language, setLanguage, enter, recording, toggleLandingVoice }
     <main className="landing-content">
       <section className="hero-copy"><div className="eyebrow"><span className="eyebrow-dot" /> COMMUNITY CARE, CLOSER</div><h1>{t.welcome}</h1><p>{t.intro}</p><div className="trust-line"><ShieldCheck size={17} />{t.safe}</div>
         <div className="entry-cards">
-          <button className="entry-card beneficiary-entry" onClick={() => enter("beneficiary")}><span className="entry-icon"><HeartHandshake size={23} /></span><span className="entry-text"><b>{t.beneficiary}</b><small>Explore your appointments, reminders and health information.</small></span><ArrowRight size={20} /></button>
-          <button className="entry-card staff-entry" onClick={() => enter("staff")}><span className="entry-icon"><Stethoscope size={22} /></span><span className="entry-text"><b>{t.staff}</b><small>Open the community care team's workspace and reports.</small></span><ArrowRight size={20} /></button>
+          <button className="entry-card beneficiary-entry" onClick={() => onLogin("beneficiary")}><span className="entry-icon"><HeartHandshake size={23} /></span><span className="entry-text"><b>{t.beneficiary}</b><small>Explore your appointments, reminders and health information.</small></span><ArrowRight size={20} /></button>
+          <button className="entry-card staff-entry" onClick={() => onLogin("staff")}><span className="entry-icon"><Stethoscope size={22} /></span><span className="entry-text"><b>{t.staff}</b><small>Open the community care team's workspace and reports.</small></span><ArrowRight size={20} /></button>
         </div>
-        <p className="demo-hint"><Sparkles size={16} /> No sign-in needed · choose a demo experience to explore</p>
+        <p className="demo-hint"><Sparkles size={16} /> Choose an experience and log in to explore the demo</p>
       </section>
       <section className="hero-art" aria-label="HopeCare community care illustration">
         <div className="hero-orbit orbit-one" /><div className="hero-orbit orbit-two" />
@@ -444,6 +445,36 @@ function Landing({ language, setLanguage, enter, recording, toggleLandingVoice }
       </section>
     </main>
     <footer className="landing-footer"><span>© The Hope Exchange · HopeCare AI Demo</span><span><ShieldCheck size={14} /> {t.consent}</span></footer>
+  </div>;
+}
+
+function LoginModal({ role, onClose, onLogin }: { role: Role; onClose: () => void; onLogin: () => void }) {
+  const isStaff = role === "staff";
+  return <div className="modal-backdrop" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+    <section className="data-modal login-modal" role="dialog" aria-modal="true" aria-labelledby="login-title">
+      <div className="modal-heading">
+        <div>
+          <span className="eyebrow">HOPECARE DEMO</span>
+          <h2 id="login-title">{isStaff ? "Staff log in" : "Beneficiary log in"}</h2>
+        </div>
+        <button className="icon-btn" onClick={onClose} aria-label="Close"><X size={20} /></button>
+      </div>
+      <form onSubmit={(event) => { event.preventDefault(); onLogin(); }}>
+        <div className="login-fields">
+          <label className="field-label">{isStaff ? "Staff email or ID" : "Beneficiary phone or ID"}
+            <input name="loginId" type="text" placeholder={isStaff ? "staff@hopeexchange.org" : "071 555 0142"} required />
+          </label>
+          <label className="field-label">Password
+            <input name="password" type="password" placeholder="Enter a demo password" required />
+          </label>
+        </div>
+        <p className="modal-footnote"><ShieldCheck size={15} />Demo log-in only. Do not enter real personal or health information.</p>
+        <div className="modal-actions">
+          <button type="button" className="button button-quiet" onClick={onClose}>Cancel</button>
+          <button type="submit" className="button button-primary">Log in <ArrowRight size={16} /></button>
+        </div>
+      </form>
+    </section>
   </div>;
 }
 
