@@ -44,7 +44,7 @@ const copy = {
     disclaimer: "HopeCare shares general information only. It cannot diagnose, prescribe, or replace a healthcare worker. For personal medical advice, please speak with a clinic professional.",
     simulation: "Demo simulation · no messages are sent", privacy: "Fictional demo records only. Your choices stay in this browser.",
     listen: "Listen to answer", stop: "Stop speaking", voiceUnsupported: "Voice features are not supported in this browser. You can still type or read replies.",
-    recording: "Listening… tap to stop", record: "Speak your question", chatClear: "Start a new conversation", consent: "By entering the demo, you agree to use fictional information only. This is not a real healthcare record.",
+    recording: "Listening… tap to stop", record: "Speak your question", speakButton: "Speak", listening: "Listening…", listeningPrompt: "Speak now — your words will appear here", chatClear: "Start a new conversation", consent: "By entering the demo, you agree to use fictional information only. This is not a real healthcare record.",
   },
   af: {
     welcome: "Gesondheidsinligting, toeganklik vir almal.",
@@ -71,7 +71,7 @@ const copy = {
     disclaimer: "HopeCare deel slegs algemene inligting. Dit kan nie diagnoseer of medisyne voorskryf nie. Praat met 'n kliniekwerker vir persoonlike advies.",
     simulation: "Demo-simulasie · geen boodskappe word gestuur nie", privacy: "Slegs fiktiewe demorekords. Jou keuses bly in hierdie blaaier.",
     listen: "Luister na antwoord", stop: "Hou op praat", voiceUnsupported: "Stemfunksies word nie deur hierdie blaaier ondersteun nie. Jy kan steeds tik of lees.",
-    recording: "Luister… tik om te stop", record: "Spreek jou vraag", chatClear: "Begin 'n nuwe gesprek", consent: "Gebruik slegs fiktiewe inligting. Dit is nie 'n werklike gesondheidsrekord nie.",
+    recording: "Luister… tik om te stop", record: "Spreek jou vraag", speakButton: "Praat", listening: "Luister…", listeningPrompt: "Praat nou — jou woorde sal hier verskyn", chatClear: "Begin 'n nuwe gesprek", consent: "Gebruik slegs fiktiewe inligting. Dit is nie 'n werklike gesondheidsrekord nie.",
   },
   xh: {
     welcome: "Ulwazi lwezempilo olufikeleleka kuye wonke umntu.",
@@ -98,7 +98,7 @@ const copy = {
     disclaimer: "IHopeCare inika ulwazi ngokubanzi kuphela. Ayikwazi ukuxilonga okanye ukumisela amayeza. Thetha nomsebenzi wezempilo ngeengcebiso zakho.",
     simulation: "Umboniso wokulinganisa · akukho miyalezo ithunyelwayo", privacy: "Iirekhodi zomzekelo ezingezizo ezokwenyani kuphela. Iinkcukacha zigcinwa kule bhrawuza.",
     listen: "Mamela impendulo", stop: "Yeka ukuthetha", voiceUnsupported: "Esi sikhangeli asixhasi ilizwi. Usenokuchwetheza okanye ufunde iimpendulo.",
-    recording: "Kumameliwe… cofa ukuze uyeke", record: "Thetha umbuzo wakho", chatClear: "Qalisa incoko entsha", consent: "Sebenzisa iinkcukacha zomzekelo kuphela. Le asiyorekhodi yokwenyani yezempilo.",
+    recording: "Kumameliwe… cofa ukuze uyeke", record: "Thetha umbuzo wakho", speakButton: "Thetha", listening: "Kumameliwe…", listeningPrompt: "Thetha ngoku — amazwi akho aza kuvela apha", chatClear: "Qalisa incoko entsha", consent: "Sebenzisa iinkcukacha zomzekelo kuphela. Le asiyorekhodi yokwenyani yezempilo.",
   },
 } as const;
 
@@ -111,7 +111,7 @@ const answerText: Record<Language, Record<string, string>> = {
   en: {
     emergency: "If you may be in immediate danger, call 112 from a mobile phone in South Africa or go to your nearest emergency service now. I can’t assess emergencies here.",
     schedule: "The next listed clinic days are Thursday 26 November and Friday 27 November 2026. Please check with Hope Exchange Community Clinic before travelling.",
-    hours: "Hope Exchange Community Clinic is listed as open Monday to Friday, 08:00–16:00. Please confirm directly before travelling.",
+    hours: "Hope Exchange Community Clinic is listed as open Monday to Friday, 09:00–16:00. Please confirm directly before travelling.",
     medication: "Your demo profile shows the next collection date on 3 December 2026. Please follow the instructions from your healthcare worker and contact your clinic if you are unsure.",
     services: "Hope Exchange Community Clinic offers wellness checks, family health information, routine visits and medication collection support. Ask clinic staff which services are available on a specific day.",
     prepare: "Bring your clinic card and any documents your clinic asked you to bring. Arrive a little early if you can. If you have questions about your care, write them down to discuss with a healthcare worker.",
@@ -121,7 +121,7 @@ const answerText: Record<Language, Record<string, string>> = {
   af: {
     emergency: "As jy onmiddellik in gevaar is, skakel 112 vanaf 'n selfoon in Suid-Afrika of gaan nou na jou naaste nooddiens. Ek kan nie noodgevalle hier beoordeel nie.",
     schedule: "Die volgende gelyste kliniekdae is Donderdag 26 November en Vrydag 27 November 2026. Ure verskil per plek; bevestig asseblief met jou kliniek voordat jy reis.",
-    hours: "Hope Exchange Community Clinic is gelys as oop Maandag tot Vrydag, 08:00–16:00. Bevestig asseblief direk voordat jy reis.",
+    hours: "Hope Exchange Community Clinic is gelys as oop Maandag tot Vrydag, 09:00–16:00. Bevestig asseblief direk voordat jy reis.",
     medication: "Jou demoprofiel wys die volgende afhaaldatum as 3 Desember 2026. Volg asseblief jou gesondheidswerker se instruksies en kontak die kliniek as jy onseker is.",
     services: "Demo-klinieke bied welstandsondersoeke, gesondheidsinligting vir gesinne, roetinebesoeke en ondersteuning met medikasie-afhaal. Vra plaaslike personeel oor 'n spesifieke dag.",
     prepare: "Bring jou kliniekkaart en enige dokumente wat die kliniek gevra het. Kom indien moontlik 'n bietjie vroeg. Skryf vrae neer om met 'n gesondheidswerker te bespreek.",
@@ -131,7 +131,7 @@ const answerText: Record<Language, Record<string, string>> = {
   xh: {
     emergency: "Ukuba usengozini ekhawulezileyo, fowunela u-112 ngeselula eMzantsi Afrika okanye uye kwinkonzo yongxamiseko ekufutshane ngoku. Andikwazi ukuvavanya iimeko ezingxamisekileyo apha.",
     schedule: "Iintsuku zekliniki ezilandelayo ezidwelisiweyo nguLwesine umhla wama-26 noLwesihlanu umhla wama-27 kuNovemba 2026. Amaxesha ayahluka; qinisekisa nekliniki yakho ngaphambi kohambo.",
-    hours: "Hope Exchange Community Clinic idweliswe njengevulwa ngoMvulo ukuya ngoLwesihlanu, 08:00–16:00. Qinisekisa ngaphambi kohambo.",
+    hours: "Hope Exchange Community Clinic idweliswe njengevulwa ngoMvulo ukuya ngoLwesihlanu, 09:00–16:00. Qinisekisa ngaphambi kohambo.",
     medication: "Iprofayile yakho yomzekelo ibonisa umhla wokuqokelela olandelayo njengowesi-3 kuDisemba 2026. Landela imiyalelo yomsebenzi wezempilo, uze uqhagamshelane nekliniki xa ungaqinisekanga.",
     services: "Iikliniki zomzekelo zinolwazi lwempilo, utyelelo lwesiqhelo, uhlolo lwempilo nenkxaso yokuqokelela amayeza. Buza abasebenzi basekuhlaleni ngeenkonzo zosuku oluthile.",
     prepare: "Yiza nekhadi lekliniki namaxwebhu ekucelwe ukuba uze nawo. Fika kwangethuba ukuba unako. Bhala imibuzo ofuna ukuyibuza umsebenzi wezempilo.",
@@ -157,6 +157,10 @@ function normalizeClinicData<T>(key: string, value: T): T {
   if (key === "beneficiaries" && Array.isArray(value)) return value.map((item) => ({ ...item, preferredClinic: HOPE_EXCHANGE_CLINIC })) as T;
   if (key === "appointments" && Array.isArray(value)) return value.map((item) => ({ ...item, clinic: HOPE_EXCHANGE_CLINIC })) as T;
   if (key === "events" && Array.isArray(value)) return value.map((item) => ({ ...item, location: HOPE_EXCHANGE_CLINIC })) as T;
+  if (key === "clinicHours" && value && typeof value === "object") {
+    const hours = value as { weekdays?: string; weekend?: string };
+    return { ...hours, weekdays: hours.weekdays === "08:00–16:00" ? "09:00–16:00" : hours.weekdays } as T;
+  }
   return value;
 }
 
@@ -177,7 +181,7 @@ function SelectLanguage({ value, onChange }: { value: Language; onChange: (v: La
 }
 
 function StatusBadge({ children }: { children: string }) {
-  const style = children === "Completed" || children === "Acknowledged" ? "green" : children === "Missed" ? "red" : children === "Sent" ? "blue" : "gold";
+  const style = children === "Completed" || children === "Acknowledged" ? "green" : children === "Missed" ? "red" : "gold";
   return <span className={`badge ${style}`}><i />{children}</span>;
 }
 
@@ -186,7 +190,7 @@ function App() {
   const [appointments, setAppointments] = useStored<Appointment[]>("appointments", initialAppointments);
   const [reminders, setReminders] = useStored<Reminder[]>("reminders", initialReminders);
   const [events, setEvents] = useStored<ClinicEvent[]>("events", initialEvents);
-  const [clinicHours, setClinicHours] = useStored<{ weekdays: string; weekend: string }>("clinicHours", { weekdays: "08:00–16:00", weekend: "Closed" });
+  const [clinicHours, setClinicHours] = useStored<{ weekdays: string; weekend: string }>("clinicHours", { weekdays: "09:00–16:00", weekend: "Closed" });
   const [announcements, setAnnouncements] = useStored<Announcement[]>("announcements", [
     { id: "AN-1", en: "The clinic will be closed on Friday. Normal services will resume on Monday.", af: "Die kliniek sal Vrydag gesluit wees. Normale dienste hervat Maandag.", xh: "Ikliniki iza kuvalwa ngoLwesihlanu. Iinkonzo zesiqhelo ziya kuqhubeka ngoMvulo.", approved: true, date: "2026-11-24" },
   ]);
@@ -263,7 +267,7 @@ function App() {
       setThinking(false);
     }, 750);
   }
-  function toggleVoice(onTranscript?: (text: string) => void) {
+  function toggleVoice() {
     const speechWindow = window as Window & {
       SpeechRecognition?: new () => RecognitionLike;
       webkitSpeechRecognition?: new () => RecognitionLike;
@@ -277,13 +281,15 @@ function App() {
     }
     const recognition = new Speech();
     recognitionRef.current = recognition;
+    const startingQuestion = question.trim();
     recognition.lang = language === "af" ? "af-ZA" : language === "xh" ? "xh-ZA" : "en-ZA";
-    recognition.interimResults = false;
+    recognition.interimResults = true;
     recognition.onresult = (event) => {
-      const transcript = event.results?.[0]?.[0]?.transcript;
-      if (!transcript) return;
-      if (onTranscript) onTranscript(transcript);
-      else sendMessage(transcript);
+      const transcript = Array.from(event.results ?? [])
+        .map((result) => result[0]?.transcript ?? "")
+        .join("")
+        .trim();
+      if (transcript) setQuestion([startingQuestion, transcript].filter(Boolean).join(" "));
     };
     recognition.onerror = () => { setRecording(false); showToast(t.voiceUnsupported); };
     recognition.onend = () => { setRecording(false); recognitionRef.current = null; };
@@ -364,11 +370,11 @@ function App() {
     showToast("Fictional demo report downloaded.");
   }
 
-  if (!role) return <Landing language={language} setLanguage={setLanguage} enter={enter} recording={recording} toggleLandingVoice={() => toggleVoice((transcript) => {
+  if (!role) return <Landing language={language} setLanguage={setLanguage} enter={enter} recording={recording} toggleLandingVoice={() => {
     setRole("beneficiary");
     setPage("assistant");
-    sendMessage(transcript);
-  })} />;
+    toggleVoice();
+  }} />;
 
   const staffPage = role === "staff";
   const pageTitle = labels[page];
@@ -405,7 +411,7 @@ function App() {
           {page === "schedule" && <SchedulePage t={t} events={events} clinicHours={clinicHours} onHoursChange={(value) => { const result = window.prompt("Weekday clinic hours (fictional demo)", value); if (result?.trim()) setClinicHours({ ...clinicHours, weekdays: result.trim() }); }} onAdd={() => openModal("event")} onEdit={(id) => openModal("event", id)} onDelete={(id) => { if (window.confirm("Delete this fictional clinic event?")) setEvents((old) => old.filter((e) => e.id !== id)); }} />}
           {page === "announcements" && <AnnouncementsPage t={t} announcements={announcements} draft={announcementDraft} setDraft={setAnnouncementDraft} translations={draftTranslations} setTranslations={setDraftTranslations} onGenerate={draftAnnouncement} onPublish={publishAnnouncement} />}
           {page === "reports" && <ReportsPage t={t} beneficiaries={beneficiaries} appointments={appointments} reminders={reminders} onExport={exportCsv} />}
-          {page === "settings" && <SettingsPage t={t} onReset={() => { if (window.confirm("Reset this browser's demo data to the original fictional sample?")) { setBeneficiaries(initialBeneficiaries); setAppointments(initialAppointments); setReminders(initialReminders); setEvents(initialEvents); setClinicHours({ weekdays: "08:00–16:00", weekend: "Closed" }); setAnnouncements([{ id: "AN-1", en: "The clinic will be closed on Friday. Normal services will resume on Monday.", af: "Die kliniek sal Vrydag gesluit wees. Normale dienste hervat Maandag.", xh: "Ikliniki iza kuvalwa ngoLwesihlanu. Iinkonzo zesiqhelo ziya kuqhubeka ngoMvulo.", approved: true, date: "2026-11-24" }]); setChat([]); showToast("Demo data reset."); } }} />}
+          {page === "settings" && <SettingsPage t={t} onReset={() => { if (window.confirm("Reset this browser's demo data to the original fictional sample?")) { setBeneficiaries(initialBeneficiaries); setAppointments(initialAppointments); setReminders(initialReminders); setEvents(initialEvents); setClinicHours({ weekdays: "09:00–16:00", weekend: "Closed" }); setAnnouncements([{ id: "AN-1", en: "The clinic will be closed on Friday. Normal services will resume on Monday.", af: "Die kliniek sal Vrydag gesluit wees. Normale dienste hervat Maandag.", xh: "Ikliniki iza kuvalwa ngoLwesihlanu. Iinkonzo zesiqhelo ziya kuqhubeka ngoMvulo.", approved: true, date: "2026-11-24" }]); setChat([]); showToast("Demo data reset."); } }} />}
         </main>
       </div>
       {modal && <DataModal kind={modal} editing={editing} beneficiaries={beneficiaries} appointments={appointments} reminders={reminders} events={events} onClose={() => { setModal(null); setEditing(null); }} onSubmit={saveModal} />}
@@ -481,8 +487,8 @@ function AssistantPage({ t, language, chat, setChat, question, setQuestion, send
         </div>
         <div className="suggested"><small>{t.quick}</small><div>{prompts.slice(0, 4).map((prompt) => <button key={prompt} onClick={() => sendMessage(prompt)}>{prompt}</button>)}</div></div>
         <form className="chat-compose" onSubmit={(e) => { e.preventDefault(); sendMessage(); }}>
-          <button type="button" className={`mic-button ${recording ? "recording" : ""}`} aria-label={recording ? t.recording : t.record} title={recording ? t.recording : t.record} onClick={toggleVoice}>{recording ? <MicOff size={20} /> : <Mic size={20} />}</button>
-          <input value={question} onChange={(e) => setQuestion(e.target.value)} placeholder={t.ask} aria-label={t.ask} />
+          <button type="button" className={`mic-button ${recording ? "recording" : ""}`} aria-label={recording ? t.recording : t.record} aria-pressed={recording} title={recording ? t.recording : t.record} onClick={toggleVoice}>{recording ? <MicOff size={20} /> : <Mic size={20} />}<span aria-live="polite">{recording ? t.listening : t.speakButton}</span></button>
+          <input value={question} onChange={(e) => setQuestion(e.target.value)} placeholder={recording ? t.listeningPrompt : t.ask} aria-label={t.ask} />
           <button className="send-button" type="submit" disabled={!question.trim() || thinking} aria-label={t.send}><Send size={18} /></button>
         </form>
         <div className="chat-footer"><span><ShieldCheck size={14} /> {t.disclaimer}</span><span>{t.simulation}</span></div>
@@ -521,8 +527,8 @@ function RemindersPage({ t, reminders, beneficiaries, staff, onAdd, onAcknowledg
   const filtered = reminders.filter((r) => filter === "All" || r.status === filter).sort((a, b) => a.date.localeCompare(b.date));
   return <>
     <PageHeading eyebrow="A LITTLE NUDGE, WHEN IT HELPS" title={staff ? t.reminders : t.remindersTitle} description={staff ? "Create and track demo reminders. Nothing is sent outside this browser." : "A gentle reminder can help you plan ahead. These are demo notifications only."} action={staff && <button className="button button-primary" onClick={onAdd}><Plus size={17} />Create reminder</button>} />
-    <div className="reminder-summary"><div><Bell size={20} /><b>{reminders.filter((r) => r.status === "Scheduled").length}</b><span>Scheduled</span></div><div><Send size={20} /><b>{reminders.filter((r) => r.status === "Sent").length}</b><span>Sent in demo</span></div><div><CheckCheck size={20} /><b>{reminders.filter((r) => r.status === "Acknowledged").length}</b><span>Acknowledged</span></div><p><ShieldCheck size={16} /> {t.simulation}</p></div>
-    <div className="toolbar"><div className="filter-tabs"><button className={filter === "All" ? "selected" : ""} onClick={() => setFilter("All")}>{t.all}</button>{(["Scheduled", "Sent", "Acknowledged"] as const).map((s) => <button key={s} className={filter === s ? "selected" : ""} onClick={() => setFilter(s)}>{s}</button>)}</div><span className="result-count">{filtered.length} reminders</span></div>
+    <div className="reminder-summary"><div><Bell size={20} /><b>{reminders.filter((r) => r.status === "Scheduled").length}</b><span>Scheduled</span></div><div><CheckCheck size={20} /><b>{reminders.filter((r) => r.status === "Acknowledged").length}</b><span>Acknowledged</span></div><p><ShieldCheck size={16} /> {t.simulation}</p></div>
+    <div className="toolbar"><div className="filter-tabs"><button className={filter === "All" ? "selected" : ""} onClick={() => setFilter("All")}>{t.all}</button>{(["Scheduled", "Acknowledged"] as const).map((s) => <button key={s} className={filter === s ? "selected" : ""} onClick={() => setFilter(s)}>{s}</button>)}</div><span className="result-count">{filtered.length} reminders</span></div>
     <div className="reminder-list">{filtered.map((r) => <article className="reminder-row" key={r.id}><span className={`reminder-symbol ${r.kind === "Medication" ? "medicine" : ""}`}>{r.kind === "Medication" ? <Heart size={20} /> : <CalendarDays size={20} />}</span><div className="reminder-content"><div className="row-heading"><b>{r.kind === "Medication" ? t.medication : t.appointment} reminder</b><span>{formatDate(r.date)}</span></div><p>{r.message}</p><small>{staff ? beneficiaries.find((b) => b.id === r.beneficiaryId)?.name ?? "Unknown beneficiary" : "Saved for your demo profile"} · {r.beneficiaryId}</small></div><div className="reminder-actions"><StatusBadge>{r.status}</StatusBadge>{staff ? <><button className="row-action" onClick={() => onEdit(r.id)}>Edit</button><button className="row-action delete-action" onClick={() => onDelete(r.id)}>Delete</button></> : r.status !== "Acknowledged" && <button className="button button-small" onClick={() => onAcknowledge(r.id)}>{t.acknowledge}</button>}</div></article>)}{!filtered.length && <div className="empty-state"><Bell size={24} /><b>{t.noData}</b></div>}</div>
   </>;
 }
@@ -679,7 +685,7 @@ function DataModal({ kind, editing, beneficiaries, appointments, reminders, even
   return <div className="modal-backdrop" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}><section className="data-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div className="modal-heading"><div><span className="eyebrow">LOCAL DEMO DATA</span><h2 id="modal-title">{title}</h2></div><button className="icon-btn" onClick={onClose} aria-label="Close"><X size={20} /></button></div><form onSubmit={onSubmit}>
     {kind === "beneficiary" && <><div className="form-grid">{field("Full name", "name", (record as Beneficiary | undefined)?.name)}{field("Phone (fictional)", "phone", (record as Beneficiary | undefined)?.phone)}{field("Area", "area", (record as Beneficiary | undefined)?.area)}<label className="field-label">Clinic<input name="clinic" value={HOPE_EXCHANGE_CLINIC} readOnly /></label><label className="field-label">Preferred language<select name="language" defaultValue={(record as Beneficiary | undefined)?.language ?? "en"}><option value="en">English</option><option value="af">Afrikaans</option><option value="xh">isiXhosa</option></select></label></div><label className="consent-check"><input name="consent" type="checkbox" required defaultChecked={Boolean((record as Beneficiary | undefined)?.consent)} /><span>I have consent to use fictional demo information only. No real personal or health details.</span></label><p className="modal-footnote"><ShieldCheck size={15} />This local demo has no real identity system or external data storage.</p></>}
     {kind === "appointment" && <><div className="form-grid"><label className="field-label">Beneficiary<select name="beneficiaryId" defaultValue={(record as Appointment | undefined)?.beneficiaryId ?? beneficiaries[0]?.id}>{beneficiaries.map((b) => <option key={b.id} value={b.id}>{b.name} · {b.id}</option>)}</select></label>{field("Date", "date", (record as Appointment | undefined)?.date ?? "2026-11-26", "date")}{field("Time", "time", (record as Appointment | undefined)?.time ?? "09:00", "time")}<label className="field-label">Clinic<input name="clinic" value={HOPE_EXCHANGE_CLINIC} readOnly /></label>{field("Visit type", "type", (record as Appointment | undefined)?.type ?? "Routine visit")}<label className="field-label">Status<select name="status" defaultValue={(record as Appointment | undefined)?.status ?? "Scheduled"}><option>Scheduled</option><option>Completed</option><option>Missed</option></select></label></div><p className="modal-footnote"><CalendarDays size={15} />Use fictional schedules only. Check real clinic dates with clinic staff.</p></>}
-    {kind === "reminder" && <><div className="form-grid"><label className="field-label">Beneficiary<select name="beneficiaryId" defaultValue={(record as Reminder | undefined)?.beneficiaryId ?? beneficiaries[0]?.id}>{beneficiaries.map((b) => <option key={b.id} value={b.id}>{b.name} · {b.id}</option>)}</select></label><label className="field-label">Reminder type<select name="kind" defaultValue={(record as Reminder | undefined)?.kind ?? "Appointment"}><option>Appointment</option><option>Medication</option></select></label>{field("Reminder date", "date", (record as Reminder | undefined)?.date ?? "2026-11-26", "date")}<label className="field-label full-field">Message<textarea name="message" rows={3} defaultValue={(record as Reminder | undefined)?.message ?? ""} required /></label><label className="field-label">Status<select name="status" defaultValue={(record as Reminder | undefined)?.status ?? "Scheduled"}><option>Scheduled</option><option>Sent</option><option>Acknowledged</option></select></label></div><p className="modal-footnote"><Bell size={15} />Simulated reminder only — no SMS, WhatsApp or external notification is sent.</p></>}
+    {kind === "reminder" && <><div className="form-grid"><label className="field-label">Beneficiary<select name="beneficiaryId" defaultValue={(record as Reminder | undefined)?.beneficiaryId ?? beneficiaries[0]?.id}>{beneficiaries.map((b) => <option key={b.id} value={b.id}>{b.name} · {b.id}</option>)}</select></label><label className="field-label">Reminder type<select name="kind" defaultValue={(record as Reminder | undefined)?.kind ?? "Appointment"}><option>Appointment</option><option>Medication</option></select></label>{field("Reminder date", "date", (record as Reminder | undefined)?.date ?? "2026-11-26", "date")}<label className="field-label full-field">Message<textarea name="message" rows={3} defaultValue={(record as Reminder | undefined)?.message ?? ""} required /></label><label className="field-label">Status<select name="status" defaultValue={(record as Reminder | undefined)?.status ?? "Scheduled"}><option>Scheduled</option><option>Acknowledged</option></select></label></div><p className="modal-footnote"><Bell size={15} />Simulated reminder only — no SMS, WhatsApp or external notification is sent.</p></>}
     {kind === "event" && <><div className="form-grid">{field("Event title", "title", (record as ClinicEvent | undefined)?.title)}{field("Date", "date", (record as ClinicEvent | undefined)?.date ?? "2026-12-02", "date")}{field("Start time", "time", (record as ClinicEvent | undefined)?.time ?? "09:00", "time")}<label className="field-label">Clinic<input name="location" value={HOPE_EXCHANGE_CLINIC} readOnly /></label><label className="field-label full-field">Description<textarea name="description" rows={3} defaultValue={(record as ClinicEvent | undefined)?.description ?? ""} required /></label></div></>}
     <div className="modal-actions"><button type="button" className="button button-quiet" onClick={onClose}>{copy.en.cancel}</button><button type="submit" className="button button-primary"><Check size={16} />Save</button></div>
   </form></section></div>;

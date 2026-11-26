@@ -1,6 +1,6 @@
 export type Language = "en" | "af" | "xh";
 export type AppointmentStatus = "Scheduled" | "Completed" | "Missed";
-export type ReminderStatus = "Scheduled" | "Sent" | "Acknowledged";
+export type ReminderStatus = "Scheduled" | "Acknowledged";
 export interface Beneficiary {
   id: string; name: string; phone: string; language: Language; area: string;
   preferredClinic: string; consent: boolean; joined: string;

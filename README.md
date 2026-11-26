@@ -7,7 +7,7 @@ A community-centred healthcare information and appointment support demonstration
 - Beneficiary portal and staff administration dashboard
 - English, Afrikaans and isiXhosa language selection
 - Simulated multilingual healthcare assistant
-- Browser voice controls with support fallbacks
+- Browser speech-to-text input and spoken replies, with support fallbacks
 - Appointment, medication reminder and announcement management
 - LocalStorage persistence
 - Clinic analytics and CSV export
@@ -50,7 +50,7 @@ Before deploying, enable GitHub Pages in repository settings and set the source 
 
 - The chatbot uses curated, simulated responses.
 - SMS and WhatsApp reminders are simulated.
-- Voice features depend on browser Web Speech API support and microphone permission.
+- Voice features depend on browser Web Speech API support and microphone permission. Recognized speech appears in the question field for review before sending.
 - LocalStorage is not a secure database or shared backend.
 - The app is not production authentication and should not be used for real medical records or decisions.
 
