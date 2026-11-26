@@ -6,8 +6,8 @@ import {
   Stethoscope, Users, Volume2, VolumeX, X,
 } from "lucide-react";
 import {
-  Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer,
-  Tooltip, XAxis, YAxis,
+  Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart,
+  ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
 import { initialAppointments, initialBeneficiaries, initialEvents, initialReminders, languageName } from "./data";
 import type { Announcement, Appointment, AppointmentStatus, Beneficiary, ClinicEvent, Language, Reminder, ReminderStatus } from "./types";
@@ -20,7 +20,7 @@ const HOPE_EXCHANGE_CLINIC = "Hope Exchange Community Clinic";
 
 const copy = {
   en: {
-    welcome: "Healthcare information made accessible to everyone.",
+    welcome: "Hello",
     intro: "A little support can make a big difference. Find clinic information, keep track of appointments and get clear answers in your language.",
     beneficiary: "Continue as a beneficiary", staff: "Continue as staff", safe: "A safe, welcoming place to find your next step.",
     home: "Home", assistant: "AI Assistant", appointments: "Appointments", reminders: "Medication reminders",
@@ -44,10 +44,10 @@ const copy = {
     disclaimer: "HopeCare shares general information only. It cannot diagnose, prescribe, or replace a healthcare worker. For personal medical advice, please speak with a clinic professional.",
     simulation: "Demo simulation · no messages are sent", privacy: "Fictional demo records only. Your choices stay in this browser.",
     listen: "Listen to answer", stop: "Stop speaking", voiceUnsupported: "Voice features are not supported in this browser. You can still type or read replies.",
-    recording: "Listening… tap to stop", record: "Speak your question", chatClear: "Start a new conversation", consent: "By entering the demo, you agree to use fictional information only. This is not a real healthcare record.",
+    recording: "Listening… tap to stop", record: "Speak your question", speakButton: "Speak", listening: "Listening…", listeningPrompt: "Speak now — your words will appear here", chatClear: "Start a new conversation", consent: "By entering the demo, you agree to use fictional information only. This is not a real healthcare record.",
   },
   af: {
-    welcome: "Gesondheidsinligting, toeganklik vir almal.",
+    welcome: "Hallo",
     intro: "Klein ondersteuning kan 'n groot verskil maak. Vind kliniekinligting, hou afsprake dop en kry duidelike antwoorde in jou taal.",
     beneficiary: "Gaan voort as 'n pasiënt", staff: "Gaan voort as personeel", safe: "’n Veilige, verwelkomende plek om jou volgende stap te vind.",
     home: "Tuis", assistant: "KI-assistent", appointments: "Afsprake", reminders: "Medikasieherinneringe",
@@ -71,10 +71,10 @@ const copy = {
     disclaimer: "HopeCare deel slegs algemene inligting. Dit kan nie diagnoseer of medisyne voorskryf nie. Praat met 'n kliniekwerker vir persoonlike advies.",
     simulation: "Demo-simulasie · geen boodskappe word gestuur nie", privacy: "Slegs fiktiewe demorekords. Jou keuses bly in hierdie blaaier.",
     listen: "Luister na antwoord", stop: "Hou op praat", voiceUnsupported: "Stemfunksies word nie deur hierdie blaaier ondersteun nie. Jy kan steeds tik of lees.",
-    recording: "Luister… tik om te stop", record: "Spreek jou vraag", chatClear: "Begin 'n nuwe gesprek", consent: "Gebruik slegs fiktiewe inligting. Dit is nie 'n werklike gesondheidsrekord nie.",
+    recording: "Luister… tik om te stop", record: "Spreek jou vraag", speakButton: "Praat", listening: "Luister…", listeningPrompt: "Praat nou — jou woorde sal hier verskyn", chatClear: "Begin 'n nuwe gesprek", consent: "Gebruik slegs fiktiewe inligting. Dit is nie 'n werklike gesondheidsrekord nie.",
   },
   xh: {
-    welcome: "Ulwazi lwezempilo olufikeleleka kuye wonke umntu.",
+    welcome: "Molo",
     intro: "Uncedo oluncinci lunokwenza umahluko omkhulu. Fumana iinkcukacha zekliniki, ulandele amadinga, uze ufumane iimpendulo ngolwimi lwakho.",
     beneficiary: "Qhubeka njengomntu ofumana uncedo", staff: "Qhubeka njengomsebenzi", safe: "Indawo ekhuselekileyo yokufumana inyathelo lakho elilandelayo.",
     home: "Ekhaya", assistant: "Umncedisi we-AI", appointments: "Amadinga", reminders: "Izikhumbuzo zamayeza",
@@ -98,7 +98,7 @@ const copy = {
     disclaimer: "IHopeCare inika ulwazi ngokubanzi kuphela. Ayikwazi ukuxilonga okanye ukumisela amayeza. Thetha nomsebenzi wezempilo ngeengcebiso zakho.",
     simulation: "Umboniso wokulinganisa · akukho miyalezo ithunyelwayo", privacy: "Iirekhodi zomzekelo ezingezizo ezokwenyani kuphela. Iinkcukacha zigcinwa kule bhrawuza.",
     listen: "Mamela impendulo", stop: "Yeka ukuthetha", voiceUnsupported: "Esi sikhangeli asixhasi ilizwi. Usenokuchwetheza okanye ufunde iimpendulo.",
-    recording: "Kumameliwe… cofa ukuze uyeke", record: "Thetha umbuzo wakho", chatClear: "Qalisa incoko entsha", consent: "Sebenzisa iinkcukacha zomzekelo kuphela. Le asiyorekhodi yokwenyani yezempilo.",
+    recording: "Kumameliwe… cofa ukuze uyeke", record: "Thetha umbuzo wakho", speakButton: "Thetha", listening: "Kumameliwe…", listeningPrompt: "Thetha ngoku — amazwi akho aza kuvela apha", chatClear: "Qalisa incoko entsha", consent: "Sebenzisa iinkcukacha zomzekelo kuphela. Le asiyorekhodi yokwenyani yezempilo.",
   },
 } as const;
 
@@ -268,7 +268,7 @@ function App() {
       setThinking(false);
     }, 750);
   }
-  function toggleVoice(onTranscript?: (text: string) => void) {
+  function toggleVoice() {
     const speechWindow = window as Window & {
       SpeechRecognition?: new () => RecognitionLike;
       webkitSpeechRecognition?: new () => RecognitionLike;
@@ -282,13 +282,15 @@ function App() {
     }
     const recognition = new Speech();
     recognitionRef.current = recognition;
+    const startingQuestion = question.trim();
     recognition.lang = language === "af" ? "af-ZA" : language === "xh" ? "xh-ZA" : "en-ZA";
-    recognition.interimResults = false;
+    recognition.interimResults = true;
     recognition.onresult = (event) => {
-      const transcript = event.results?.[0]?.[0]?.transcript;
-      if (!transcript) return;
-      if (onTranscript) onTranscript(transcript);
-      else sendMessage(transcript);
+      const transcript = Array.from(event.results ?? [])
+        .map((result) => result[0]?.transcript ?? "")
+        .join("")
+        .trim();
+      if (transcript) setQuestion([startingQuestion, transcript].filter(Boolean).join(" "));
     };
     recognition.onerror = () => { setRecording(false); showToast(t.voiceUnsupported); };
     recognition.onend = () => { setRecording(false); recognitionRef.current = null; };
@@ -370,9 +372,7 @@ function App() {
   }
 
   if (!role) return <><Landing language={language} setLanguage={setLanguage} onLogin={(nextRole) => setLoginRole(nextRole)} recording={recording} toggleLandingVoice={() => toggleVoice((transcript) => {
-    setRole("beneficiary");
-    setPage("assistant");
-    sendMessage(transcript);
+    setLoginRole("beneficiary");
   })} />{loginRole && <LoginModal role={loginRole} onClose={() => setLoginRole(null)} onLogin={() => { enter(loginRole); setLoginRole(null); }} />}</>;
 
   const staffPage = role === "staff";
@@ -430,21 +430,19 @@ function Landing({ language, setLanguage, onLogin, recording, toggleLandingVoice
   return <div className="landing">
     <header className="landing-header"><Logo /><div className="landing-header-actions"><button type="button" className={`landing-mic-button ${recording ? "recording" : ""}`} aria-label={recording ? t.recording : t.record} title={recording ? t.recording : t.record} onClick={toggleLandingVoice}>{recording ? <MicOff size={19} /> : <Mic size={19} />}</button><SelectLanguage value={language} onChange={setLanguage} /></div></header>
     <main className="landing-content">
-      <section className="hero-copy"><div className="eyebrow"><span className="eyebrow-dot" /> COMMUNITY CARE, CLOSER</div><h1>{t.welcome}</h1><p>{t.intro}</p><div className="trust-line"><ShieldCheck size={17} />{t.safe}</div>
+      <section className="hero-copy"><h1>{t.welcome}</h1>
         <div className="entry-cards">
           <button className="entry-card beneficiary-entry" onClick={() => onLogin("beneficiary")}><span className="entry-icon"><HeartHandshake size={23} /></span><span className="entry-text"><b>{t.beneficiary}</b><small>Explore your appointments, reminders and health information.</small></span><ArrowRight size={20} /></button>
           <button className="entry-card staff-entry" onClick={() => onLogin("staff")}><span className="entry-icon"><Stethoscope size={22} /></span><span className="entry-text"><b>{t.staff}</b><small>Open the community care team's workspace and reports.</small></span><ArrowRight size={20} /></button>
         </div>
-        <p className="demo-hint"><Sparkles size={16} /> Choose an experience and log in to explore the demo</p>
       </section>
-      <section className="hero-art" aria-label="HopeCare community care illustration">
+      {/* Landing illustration removed to keep the entry screen focused. */}{false && <section className="hero-art" aria-label="HopeCare community care illustration">
         <div className="hero-orbit orbit-one" /><div className="hero-orbit orbit-two" />
         <div className="hero-circle"><div className="sun-shape" /><div className="hill hill-back" /><div className="hill hill-front" /><div className="art-person person-one"><span className="head" /><span className="body" /></div><div className="art-person person-two"><span className="head" /><span className="body" /></div><div className="art-person person-three"><span className="head" /><span className="body" /></div><div className="art-heart"><Heart size={19} fill="currentColor" /></div></div>
         <div className="floating-note note-top"><span><CalendarDays size={17} /></span><div><b>A little more support</b><small>One step at a time</small></div></div>
         <div className="floating-note note-bottom"><span className="note-green"><MessageCircle size={17} /></span><div><b>Here in your language</b><small>English · Afrikaans · isiXhosa</small></div></div>
-      </section>
+      </section>}
     </main>
-    <footer className="landing-footer"><span>© The Hope Exchange · HopeCare AI Demo</span><span><ShieldCheck size={14} /> {t.consent}</span></footer>
   </div>;
 }
 
@@ -516,8 +514,8 @@ function AssistantPage({ t, language, chat, setChat, question, setQuestion, send
         </div>
         <div className="suggested"><small>{t.quick}</small><div>{prompts.slice(0, 4).map((prompt) => <button key={prompt} onClick={() => sendMessage(prompt)}>{prompt}</button>)}</div></div>
         <form className="chat-compose" onSubmit={(e) => { e.preventDefault(); sendMessage(); }}>
-          <button type="button" className={`mic-button ${recording ? "recording" : ""}`} aria-label={recording ? t.recording : t.record} title={recording ? t.recording : t.record} onClick={toggleVoice}>{recording ? <MicOff size={20} /> : <Mic size={20} />}</button>
-          <input value={question} onChange={(e) => setQuestion(e.target.value)} placeholder={t.ask} aria-label={t.ask} />
+          <button type="button" className={`mic-button ${recording ? "recording" : ""}`} aria-label={recording ? t.recording : t.record} aria-pressed={recording} title={recording ? t.recording : t.record} onClick={toggleVoice}>{recording ? <MicOff size={20} /> : <Mic size={20} />}<span aria-live="polite">{recording ? t.listening : t.speakButton}</span></button>
+          <input value={question} onChange={(e) => setQuestion(e.target.value)} placeholder={recording ? t.listeningPrompt : t.ask} aria-label={t.ask} />
           <button className="send-button" type="submit" disabled={!question.trim() || thinking} aria-label={t.send}><Send size={18} /></button>
         </form>
         <div className="chat-footer"><span><ShieldCheck size={14} /> {t.disclaimer}</span><span>{t.simulation}</span></div>
@@ -644,16 +642,32 @@ function StaffDashboard({ t, beneficiaries, appointments, reminders, onNavigate 
     { label: t.sent, value: reminders.filter((r) => r.status !== "Scheduled").length, icon: <Bell size={19} />, color: "blue", trend: "Simulated only" },
     { label: t.interactions, value: 128, icon: <MessageCircle size={19} />, color: "mint", trend: "Sample analytics" },
   ];
-  const languageData = [
-    { name: "English", count: 58 }, { name: "Afrikaans", count: 31 }, { name: "isiXhosa", count: 39 },
-  ];
+  const languageVisits = appointments
+    .filter((appointment) => appointment.status === "Completed")
+    .reduce<Record<string, { visit: string; en: number; af: number; xh: number }>>((counts, appointment) => {
+      const beneficiary = beneficiaries.find((person) => person.id === appointment.beneficiaryId);
+      if (!beneficiary) return counts;
+
+      const visit = counts[appointment.date] ?? {
+        visit: new Date(`${appointment.date}T12:00:00`).toLocaleDateString("en-ZA", { day: "2-digit", month: "short" }),
+        en: 0,
+        af: 0,
+        xh: 0,
+      };
+      visit[beneficiary.language] += 1;
+      counts[appointment.date] = visit;
+      return counts;
+    }, {});
+  const languageVisitData = Object.entries(languageVisits)
+    .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
+    .map(([, visit]) => visit);
   const upcoming = appointments.filter((a) => a.status === "Scheduled").sort((a, b) => a.date.localeCompare(b.date)).slice(0, 4);
   return <>
     <PageHeading eyebrow="STAFF WORKSPACE" title={t.dashboard} description={t.today} action={<span className="dashboard-date"><CalendarDays size={16} /> Wednesday, 25 November 2026</span>} />
     <div className="kpi-grid">{kpis.map((k) => <article className="kpi-card" key={k.label}><span className={`kpi-icon ${k.color}`}>{k.icon}</span><small>{k.label}</small><b>{k.value}</b><span>{k.trend}</span></article>)}</div>
     <div className="dashboard-charts">
       <article className="chart-card visits-chart"><div className="chart-heading"><div><h2>Clinic visits over time</h2><p>Weekly attendance · fictional aggregate</p></div><span className="chart-legend"><i /> Visits <i className="legend-missed" /> Missed</span></div><div className="chart-area"><ResponsiveContainer width="100%" height="100%"><AreaChart data={visitsChart} margin={{ top: 10, right: 12, bottom: 0, left: -18 }}><defs><linearGradient id="visitFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#168878" stopOpacity={0.19} /><stop offset="100%" stopColor="#168878" stopOpacity={0.01} /></linearGradient></defs><CartesianGrid stroke="#edf2ef" vertical={false} /><XAxis dataKey="week" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "#82918d" }} /><YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "#82918d" }} /><Tooltip /><Area type="monotone" dataKey="visits" stroke="#168878" strokeWidth={2.5} fill="url(#visitFill)" /><Area type="monotone" dataKey="missed" stroke="#e7a767" strokeWidth={2} fill="transparent" /></AreaChart></ResponsiveContainer></div></article>
-      <article className="chart-card language-chart"><div className="chart-heading"><div><h2>Assistant usage by language</h2><p>Sample interactions · fictional aggregate</p></div></div><div className="donut-wrap"><ResponsiveContainer width="100%" height="100%"><PieChart><Pie data={languageData} dataKey="count" nameKey="name" innerRadius={55} outerRadius={78} paddingAngle={4} stroke="none">{languageData.map((item, i) => <Cell key={item.name} fill={COLORS[i]} />)}</Pie><Tooltip /></PieChart></ResponsiveContainer><div className="donut-center"><b>128</b><span>interactions</span></div></div><div className="language-legend">{languageData.map((item, i) => <div key={item.name}><i style={{ background: COLORS[i] }} />{item.name}<b>{item.count}</b></div>)}</div></article>
+      <article className="chart-card language-chart"><div className="chart-heading"><div><h2>Language speakers by clinic visit</h2><p>Completed visits · speakers by preferred language</p></div></div><div className="chart-area"><ResponsiveContainer width="100%" height="100%"><LineChart data={languageVisitData} margin={{ top: 10, right: 12, bottom: 0, left: -18 }}><CartesianGrid stroke="#edf2ef" vertical={false} /><XAxis dataKey="visit" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: "#82918d" }} /><YAxis allowDecimals={false} axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: "#82918d" }} /><Tooltip /><Legend verticalAlign="bottom" height={26} iconType="circle" wrapperStyle={{ fontSize: 9 }} /><Line type="linear" dataKey="en" name="English" stroke={COLORS[0]} strokeWidth={2} dot={{ r: 3 }} /><Line type="linear" dataKey="af" name="Afrikaans" stroke={COLORS[1]} strokeWidth={2} dot={{ r: 3 }} /><Line type="linear" dataKey="xh" name="isiXhosa" stroke={COLORS[2]} strokeWidth={2} dot={{ r: 3 }} /></LineChart></ResponsiveContainer></div></article>
     </div>
     <div className="dashboard-bottom">
       <article className="panel-card"><div className="panel-heading"><div><h2>Upcoming clinic visits</h2><p>Visits scheduled in this sample</p></div><button className="text-button" onClick={() => onNavigate("appointments")}>{t.viewAll}<ArrowRight size={14} /></button></div><div className="upcoming-list">{upcoming.map((a) => { const user = beneficiaries.find((b) => b.id === a.beneficiaryId); return <div className="upcoming-row" key={a.id}><span className="mini-avatar">{user?.name.split(" ").map((x) => x[0]).join("")}</span><div><b>{user?.name}</b><small>{a.type} · {a.clinic}</small></div><time>{formatDate(a.date)}<small>{a.time}</small></time></div>; })}</div></article>
