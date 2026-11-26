@@ -6,8 +6,8 @@ import {
   Stethoscope, Users, Volume2, VolumeX, X,
 } from "lucide-react";
 import {
-  Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer,
-  Tooltip, XAxis, YAxis,
+  Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart,
+  ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
 import { initialAppointments, initialBeneficiaries, initialEvents, initialReminders, languageName } from "./data";
 import type { Announcement, Appointment, AppointmentStatus, Beneficiary, ClinicEvent, Language, Reminder, ReminderStatus } from "./types";
@@ -609,16 +609,32 @@ function StaffDashboard({ t, beneficiaries, appointments, reminders, onNavigate 
     { label: t.sent, value: reminders.filter((r) => r.status !== "Scheduled").length, icon: <Bell size={19} />, color: "blue", trend: "Simulated only" },
     { label: t.interactions, value: 128, icon: <MessageCircle size={19} />, color: "mint", trend: "Sample analytics" },
   ];
-  const languageData = [
-    { name: "English", count: 58 }, { name: "Afrikaans", count: 31 }, { name: "isiXhosa", count: 39 },
-  ];
+  const languageVisits = appointments
+    .filter((appointment) => appointment.status === "Completed")
+    .reduce<Record<string, { visit: string; en: number; af: number; xh: number }>>((counts, appointment) => {
+      const beneficiary = beneficiaries.find((person) => person.id === appointment.beneficiaryId);
+      if (!beneficiary) return counts;
+
+      const visit = counts[appointment.date] ?? {
+        visit: new Date(`${appointment.date}T12:00:00`).toLocaleDateString("en-ZA", { day: "2-digit", month: "short" }),
+        en: 0,
+        af: 0,
+        xh: 0,
+      };
+      visit[beneficiary.language] += 1;
+      counts[appointment.date] = visit;
+      return counts;
+    }, {});
+  const languageVisitData = Object.entries(languageVisits)
+    .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
+    .map(([, visit]) => visit);
   const upcoming = appointments.filter((a) => a.status === "Scheduled").sort((a, b) => a.date.localeCompare(b.date)).slice(0, 4);
   return <>
     <PageHeading eyebrow="STAFF WORKSPACE" title={t.dashboard} description={t.today} action={<span className="dashboard-date"><CalendarDays size={16} /> Wednesday, 25 November 2026</span>} />
     <div className="kpi-grid">{kpis.map((k) => <article className="kpi-card" key={k.label}><span className={`kpi-icon ${k.color}`}>{k.icon}</span><small>{k.label}</small><b>{k.value}</b><span>{k.trend}</span></article>)}</div>
     <div className="dashboard-charts">
       <article className="chart-card visits-chart"><div className="chart-heading"><div><h2>Clinic visits over time</h2><p>Weekly attendance · fictional aggregate</p></div><span className="chart-legend"><i /> Visits <i className="legend-missed" /> Missed</span></div><div className="chart-area"><ResponsiveContainer width="100%" height="100%"><AreaChart data={visitsChart} margin={{ top: 10, right: 12, bottom: 0, left: -18 }}><defs><linearGradient id="visitFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#168878" stopOpacity={0.19} /><stop offset="100%" stopColor="#168878" stopOpacity={0.01} /></linearGradient></defs><CartesianGrid stroke="#edf2ef" vertical={false} /><XAxis dataKey="week" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "#82918d" }} /><YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "#82918d" }} /><Tooltip /><Area type="monotone" dataKey="visits" stroke="#168878" strokeWidth={2.5} fill="url(#visitFill)" /><Area type="monotone" dataKey="missed" stroke="#e7a767" strokeWidth={2} fill="transparent" /></AreaChart></ResponsiveContainer></div></article>
-      <article className="chart-card language-chart"><div className="chart-heading"><div><h2>Assistant usage by language</h2><p>Sample interactions · fictional aggregate</p></div></div><div className="donut-wrap"><ResponsiveContainer width="100%" height="100%"><PieChart><Pie data={languageData} dataKey="count" nameKey="name" innerRadius={55} outerRadius={78} paddingAngle={4} stroke="none">{languageData.map((item, i) => <Cell key={item.name} fill={COLORS[i]} />)}</Pie><Tooltip /></PieChart></ResponsiveContainer><div className="donut-center"><b>128</b><span>interactions</span></div></div><div className="language-legend">{languageData.map((item, i) => <div key={item.name}><i style={{ background: COLORS[i] }} />{item.name}<b>{item.count}</b></div>)}</div></article>
+      <article className="chart-card language-chart"><div className="chart-heading"><div><h2>Language speakers by clinic visit</h2><p>Completed visits · speakers by preferred language</p></div></div><div className="chart-area"><ResponsiveContainer width="100%" height="100%"><LineChart data={languageVisitData} margin={{ top: 10, right: 12, bottom: 0, left: -18 }}><CartesianGrid stroke="#edf2ef" vertical={false} /><XAxis dataKey="visit" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: "#82918d" }} /><YAxis allowDecimals={false} axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: "#82918d" }} /><Tooltip /><Legend verticalAlign="bottom" height={26} iconType="circle" wrapperStyle={{ fontSize: 9 }} /><Line type="linear" dataKey="en" name="English" stroke={COLORS[0]} strokeWidth={2} dot={{ r: 3 }} /><Line type="linear" dataKey="af" name="Afrikaans" stroke={COLORS[1]} strokeWidth={2} dot={{ r: 3 }} /><Line type="linear" dataKey="xh" name="isiXhosa" stroke={COLORS[2]} strokeWidth={2} dot={{ r: 3 }} /></LineChart></ResponsiveContainer></div></article>
     </div>
     <div className="dashboard-bottom">
       <article className="panel-card"><div className="panel-heading"><div><h2>Upcoming clinic visits</h2><p>Visits scheduled in this sample</p></div><button className="text-button" onClick={() => onNavigate("appointments")}>{t.viewAll}<ArrowRight size={14} /></button></div><div className="upcoming-list">{upcoming.map((a) => { const user = beneficiaries.find((b) => b.id === a.beneficiaryId); return <div className="upcoming-row" key={a.id}><span className="mini-avatar">{user?.name.split(" ").map((x) => x[0]).join("")}</span><div><b>{user?.name}</b><small>{a.type} · {a.clinic}</small></div><time>{formatDate(a.date)}<small>{a.time}</small></time></div>; })}</div></article>
