@@ -263,7 +263,7 @@ function App() {
       setThinking(false);
     }, 750);
   }
-  function toggleVoice() {
+  function toggleVoice(onTranscript?: (text: string) => void) {
     const speechWindow = window as Window & {
       SpeechRecognition?: new () => RecognitionLike;
       webkitSpeechRecognition?: new () => RecognitionLike;
@@ -279,7 +279,12 @@ function App() {
     recognitionRef.current = recognition;
     recognition.lang = language === "af" ? "af-ZA" : language === "xh" ? "xh-ZA" : "en-ZA";
     recognition.interimResults = false;
-    recognition.onresult = (event) => { const transcript = event.results?.[0]?.[0]?.transcript; if (transcript) sendMessage(transcript); };
+    recognition.onresult = (event) => {
+      const transcript = event.results?.[0]?.[0]?.transcript;
+      if (!transcript) return;
+      if (onTranscript) onTranscript(transcript);
+      else sendMessage(transcript);
+    };
     recognition.onerror = () => { setRecording(false); showToast(t.voiceUnsupported); };
     recognition.onend = () => { setRecording(false); recognitionRef.current = null; };
     try {
@@ -359,7 +364,11 @@ function App() {
     showToast("Fictional demo report downloaded.");
   }
 
-  if (!role) return <Landing language={language} setLanguage={setLanguage} enter={enter} />;
+  if (!role) return <Landing language={language} setLanguage={setLanguage} enter={enter} recording={recording} toggleLandingVoice={() => toggleVoice((transcript) => {
+    setRole("beneficiary");
+    setPage("assistant");
+    sendMessage(transcript);
+  })} />;
 
   const staffPage = role === "staff";
   const pageTitle = labels[page];
@@ -405,10 +414,16 @@ function App() {
   );
 }
 
-function Landing({ language, setLanguage, enter }: { language: Language; setLanguage: (v: Language) => void; enter: (r: Role) => void }) {
+function Landing({ language, setLanguage, enter, recording, toggleLandingVoice }: {
+  language: Language;
+  setLanguage: (v: Language) => void;
+  enter: (r: Role) => void;
+  recording: boolean;
+  toggleLandingVoice: () => void;
+}) {
   const t = copy[language];
   return <div className="landing">
-    <header className="landing-header"><Logo /><SelectLanguage value={language} onChange={setLanguage} /></header>
+    <header className="landing-header"><Logo /><div className="landing-header-actions"><button type="button" className={`landing-mic-button ${recording ? "recording" : ""}`} aria-label={recording ? t.recording : t.record} title={recording ? t.recording : t.record} onClick={toggleLandingVoice}>{recording ? <MicOff size={19} /> : <Mic size={19} />}</button><SelectLanguage value={language} onChange={setLanguage} /></div></header>
     <main className="landing-content">
       <section className="hero-copy"><div className="eyebrow"><span className="eyebrow-dot" /> COMMUNITY CARE, CLOSER</div><h1>{t.welcome}</h1><p>{t.intro}</p><div className="trust-line"><ShieldCheck size={17} />{t.safe}</div>
         <div className="entry-cards">
