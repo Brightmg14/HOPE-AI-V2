@@ -43,6 +43,17 @@
 .badge-en { left: 20px; top: 70px; } .badge-voice { right: 5px; bottom: 45px; }
 .landing-footer { min-height: 58px; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; max-width: 1180px; width: calc(100% - 48px); margin: auto; color: var(--muted); font-size: 12px; }
 .landing-footer span:first-child { display: flex; align-items: center; gap: 7px; }
+.login-backdrop { position: fixed; z-index: 60; inset: 0; display: grid; place-items: center; padding: 18px; background: #1c342f72; backdrop-filter: blur(3px); }
+.login-dialog { width: min(430px, 100%); padding: 24px; border: 1px solid var(--line); border-radius: 16px; background: #fff; box-shadow: 0 22px 65px #142c2440; animation: login-in .16s ease-out; }
+.login-heading { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 20px; }
+.login-heading h2 { margin: 6px 0 0; color: var(--ink); font-size: 22px; }
+.login-fields { display: grid; gap: 14px; }
+.login-fields .field-label { display: grid; gap: 7px; color: var(--muted); font-size: 13px; font-weight: 650; }
+.login-fields input { width: 100%; min-height: 42px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 9px; color: var(--ink); background: #fff; }
+.login-fields input:focus { border-color: var(--color-primary-dark); outline: 3px solid color-mix(in srgb, var(--color-primary-dark) 18%, transparent); }
+.login-note { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
+.login-submit { width: 100%; min-height: 44px; margin-top: 2px; }
+@keyframes login-in { from { opacity: 0; transform: translateY(7px) scale(.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
 .app-shell { min-height: 100vh; display: grid; grid-template-columns: 244px minmax(0, 1fr); background: var(--soft); }
 .sidebar { position: sticky; top: 0; height: 100vh; background: white; border-right: 1px solid var(--line); padding: 24px 16px 16px; display: flex; flex-direction: column; z-index: 30; }

@@ -130,6 +130,8 @@ function Landing({ language, setLanguage, enterPortal, reset, toast }: {
   reset: () => void
   toast: string
 }) {
+  const [loginRole, setLoginRole] = useState<Role | null>(null)
+
   return (
     <div className="landing">
       <header className="landing-header">
@@ -142,8 +144,8 @@ function Landing({ language, setLanguage, enterPortal, reset, toast }: {
           <h2>Healthcare information<br /><em>made accessible.</em></h2>
           <p>{t(language, 'tagline')}</p>
           <div className="portal-actions">
-            <button className="primary-action" onClick={() => enterPortal('beneficiary')}><Users /><span><small>For community members</small>{t(language, 'beneficiary')}</span><ChevronRight /></button>
-            <button className="secondary-action" onClick={() => enterPortal('staff')}><Stethoscope /><span><small>For clinic teams</small>{t(language, 'staff')}</span><ChevronRight /></button>
+            <button className="primary-action" onClick={() => setLoginRole('beneficiary')}><Users /><span><small>For community members</small>{t(language, 'beneficiary')}</span><ChevronRight /></button>
+            <button className="secondary-action" onClick={() => setLoginRole('staff')}><Stethoscope /><span><small>For clinic teams</small>{t(language, 'staff')}</span><ChevronRight /></button>
           </div>
           <button className="reset-link" onClick={reset}>Reset demo data</button>
         </section>
@@ -160,6 +162,34 @@ function Landing({ language, setLanguage, enterPortal, reset, toast }: {
       </main>
       <footer className="landing-footer"><span><ShieldCheck size={16} /> {t(language, 'disclaimer')}</span><span>Demo accounts are fictional</span></footer>
       {toast && <div className="toast">{toast}</div>}
+      {loginRole && (
+        <div className="login-backdrop" onClick={() => setLoginRole(null)}>
+          <section className="login-dialog" role="dialog" aria-modal="true" aria-labelledby="login-title" onClick={event => event.stopPropagation()}>
+            <div className="login-heading">
+              <div>
+                <span className="eyebrow">{t(language, 'demoLogin')}</span>
+                <h2 id="login-title">{t(language, loginRole === 'beneficiary' ? 'beneficiaryLoginTitle' : 'staffLoginTitle')}</h2>
+              </div>
+              <button className="icon-btn" type="button" aria-label={t(language, 'close')} onClick={() => setLoginRole(null)}><X size={18} /></button>
+            </div>
+            <form className="login-fields" onSubmit={event => {
+              event.preventDefault()
+              enterPortal(loginRole)
+            }}>
+              <label className="field-label">
+                {t(language, 'email')}
+                <input type="email" autoComplete="email" required />
+              </label>
+              <label className="field-label">
+                {t(language, 'password')}
+                <input type="password" autoComplete="current-password" required />
+              </label>
+              <p className="login-note">{t(language, 'demoLoginNote')}</p>
+              <button className="button button-primary login-submit" type="submit">{t(language, 'login')}</button>
+            </form>
+          </section>
+        </div>
+      )}
     </div>
   )
 }
