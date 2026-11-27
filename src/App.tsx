@@ -75,10 +75,7 @@ function App() {
 
   if (!role) {
     return (
-      <Landing language={language} setLanguage={setLanguage} enterPortal={enterPortal} reset={() => {
-        updateData(resetData())
-        notify('Demo data restored')
-      }} toast={toast} />
+      <Landing language={language} setLanguage={setLanguage} enterPortal={enterPortal} toast={toast} />
     )
   }
 
@@ -123,11 +120,10 @@ function App() {
   )
 }
 
-function Landing({ language, setLanguage, enterPortal, reset, toast }: {
+function Landing({ language, setLanguage, enterPortal, toast }: {
   language: Language
   setLanguage: (language: Language) => void
   enterPortal: (role: Role) => void
-  reset: () => void
   toast: string
 }) {
   return (
@@ -138,27 +134,13 @@ function Landing({ language, setLanguage, enterPortal, reset, toast }: {
       </header>
       <main className="hero">
         <section className="hero-copy">
-          <div className="demo-pill"><ShieldCheck size={15} /> Fictional demo — no real medical data</div>
-          <h2>Healthcare information<br /><em>made accessible.</em></h2>
-          <p>{t(language, 'tagline')}</p>
+          <h2 className="hello-greeting">Welcome</h2>
           <div className="portal-actions">
-            <button className="primary-action" onClick={() => enterPortal('beneficiary')}><Users /><span><small>For community members</small>{t(language, 'beneficiary')}</span><ChevronRight /></button>
-            <button className="secondary-action" onClick={() => enterPortal('staff')}><Stethoscope /><span><small>For clinic teams</small>{t(language, 'staff')}</span><ChevronRight /></button>
+            <button className="primary-action" onClick={() => enterPortal('beneficiary')}><Users /><span>{t(language, 'beneficiary')}</span><ChevronRight /></button>
+            <button className="secondary-action" onClick={() => enterPortal('staff')}><Stethoscope /><span>{t(language, 'staff')}</span><ChevronRight /></button>
           </div>
-          <button className="reset-link" onClick={reset}>Reset demo data</button>
-        </section>
-        <section className="hero-visual" aria-label="Platform preview">
-          <div className="phone-card">
-            <div className="phone-top"><div className="mini-logo"><HeartPulse /></div><span>{t(language, 'welcome')}, Anele</span></div>
-            <div className="phone-banner"><CalendarDays /><div><small>Upcoming appointment</small><strong>Tue, 1 Dec · 09:00</strong></div></div>
-            <div className="phone-grid"><div><Pill /><strong>Medication</strong><small>Collection due</small></div><div><Bot /><strong>Ask AI</strong><small>Get help</small></div></div>
-            <div className="phone-announcement"><Bell /><div><strong>Clinic update</strong><small>Normal services on Monday</small></div></div>
-          </div>
-          <div className="floating-badge badge-en"><Languages /><span><strong>Multilingual</strong><small>EN · AF · XH</small></span></div>
-          <div className="floating-badge badge-voice"><Mic /><span><strong>Voice support</strong><small>Speak naturally</small></span></div>
         </section>
       </main>
-      <footer className="landing-footer"><span><ShieldCheck size={16} /> {t(language, 'disclaimer')}</span><span>Demo accounts are fictional</span></footer>
       {toast && <div className="toast">{toast}</div>}
     </div>
   )
