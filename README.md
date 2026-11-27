@@ -7,7 +7,7 @@ A community-centred healthcare information and appointment support demonstration
 - Beneficiary portal and staff administration dashboard
 - English, Afrikaans and isiXhosa language selection
 - Simulated multilingual healthcare assistant
-- Browser voice controls with support fallbacks
+- Welcome-page voice mode toggle and browser voice controls with support fallbacks
 - Appointment, medication reminder and announcement management
 - LocalStorage persistence
 - Clinic analytics and CSV export

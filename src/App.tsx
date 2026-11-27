@@ -54,6 +54,7 @@ function App() {
   const [data, setData] = useState<DemoData>(() => loadData())
   const [role, setRole] = useState<Role | null>(null)
   const [language, setLanguage] = useState<Language>('en')
+  const [voiceEnabled, setVoiceEnabled] = useState(true)
   const [page, setPage] = useState('home')
   const [mobileNav, setMobileNav] = useState(false)
   const [toast, setToast] = useState('')
@@ -75,7 +76,7 @@ function App() {
 
   if (!role) {
     return (
-      <Landing language={language} setLanguage={setLanguage} enterPortal={enterPortal} toast={toast} />
+      <Landing language={language} setLanguage={setLanguage} voiceEnabled={voiceEnabled} toggleVoice={() => setVoiceEnabled(current => !current)} enterPortal={enterPortal} toast={toast} />
     )
   }
 
@@ -111,7 +112,7 @@ function App() {
         </header>
         <div className="page-content">
           {role === 'beneficiary'
-            ? <BeneficiaryPages page={page} data={data} language={language} updateData={updateData} notify={notify} />
+            ? <BeneficiaryPages page={page} data={data} language={language} voiceEnabled={voiceEnabled} updateData={updateData} notify={notify} />
             : <StaffPages page={page} data={data} updateData={updateData} notify={notify} />}
         </div>
       </main>
@@ -120,9 +121,11 @@ function App() {
   )
 }
 
-function Landing({ language, setLanguage, enterPortal, toast }: {
+function Landing({ language, setLanguage, voiceEnabled, toggleVoice, enterPortal, toast }: {
   language: Language
   setLanguage: (language: Language) => void
+  voiceEnabled: boolean
+  toggleVoice: () => void
   enterPortal: (role: Role) => void
   toast: string
 }) {
@@ -132,7 +135,10 @@ function Landing({ language, setLanguage, enterPortal, toast }: {
     <div className="landing">
       <header className="landing-header">
         <div className="brand"><div className="brand-mark"><HeartPulse /></div><div><strong>HopeCare</strong><span>AI</span></div></div>
-        <label className="language-picker"><Languages size={17} /><select value={language} onChange={e => setLanguage(e.target.value as Language)}><option value="en">English</option><option value="af">Afrikaans</option><option value="xh">isiXhosa</option></select></label>
+        <div className="landing-header-actions">
+          <button type="button" className={`landing-mic-button ${voiceEnabled ? 'enabled' : ''}`} aria-label={voiceEnabled ? 'Disable voice features' : 'Enable voice features'} aria-pressed={voiceEnabled} title={voiceEnabled ? 'Voice features enabled' : 'Voice features disabled'} onClick={toggleVoice}><Mic size={18} /></button>
+          <label className="language-picker"><Languages size={17} /><select value={language} onChange={e => setLanguage(e.target.value as Language)} aria-label="Language"><option value="en">English</option><option value="af">Afrikaans</option><option value="xh">isiXhosa</option></select></label>
+        </div>
       </header>
       <main className="hero">
         <section className="hero-copy">
@@ -176,10 +182,11 @@ function Landing({ language, setLanguage, enterPortal, toast }: {
   )
 }
 
-function BeneficiaryPages({ page, data, language, updateData, notify }: {
+function BeneficiaryPages({ page, data, language, voiceEnabled, updateData, notify }: {
   page: string
   data: DemoData
   language: Language
+  voiceEnabled: boolean
   updateData: (data: DemoData) => void
   notify: (message: string) => void
 }) {
@@ -188,7 +195,7 @@ function BeneficiaryPages({ page, data, language, updateData, notify }: {
   const reminders = data.reminders.filter(item => item.beneficiaryId === beneficiary.id)
   const upcoming = appointments.find(item => item.status === 'Scheduled')
 
-  if (page === 'assistant') return <Assistant language={language} updateData={updateData} data={data} />
+  if (page === 'assistant') return <Assistant language={language} voiceEnabled={voiceEnabled} updateData={updateData} data={data} />
   if (page === 'appointments') return (
     <section>
       <div className="section-heading"><div><span className="eyebrow">Appointment history</span><h2>Your appointments</h2></div></div>
@@ -261,7 +268,7 @@ function BeneficiaryPages({ page, data, language, updateData, notify }: {
   )
 }
 
-function Assistant({ language, data, updateData }: { language: Language; data: DemoData; updateData: (data: DemoData) => void }) {
+function Assistant({ language, voiceEnabled, data, updateData }: { language: Language; voiceEnabled: boolean; data: DemoData; updateData: (data: DemoData) => void }) {
   const [messages, setMessages] = useState<{ role: 'assistant' | 'user'; text: string; time: string }[]>([
     { role: 'assistant', text: 'Sawubona! Hello! I am the HopeCare demonstration assistant. I can explain fictional clinic information, but I am not a doctor. How can I help?', time: 'Now' },
   ])
@@ -319,7 +326,7 @@ function Assistant({ language, data, updateData }: { language: Language; data: D
 
   const speakLast = () => {
     const last = [...messages].reverse().find(message => message.role === 'assistant')
-    if (!last || !('speechSynthesis' in window)) return
+    if (!voiceEnabled || !last || !('speechSynthesis' in window)) return
     window.speechSynthesis.cancel()
     const utterance = new SpeechSynthesisUtterance(last.text)
     utterance.lang = language === 'af' ? 'af-ZA' : language === 'xh' ? 'xh-ZA' : 'en-ZA'
@@ -339,11 +346,11 @@ function Assistant({ language, data, updateData }: { language: Language; data: D
           {messages.map((message, index) => <div className={`message ${message.role}`} key={index}><div>{message.text}</div><small>{message.time}</small></div>)}
         </div>
         <div className="chat-input">
-          <button className={`mic-button ${listening ? 'listening' : ''}`} aria-label={listening ? 'Listening for microphone input' : 'Use voice input'} onClick={startListening}><Mic /></button>
+          <button className={`mic-button ${listening ? 'listening' : ''}`} aria-label={!voiceEnabled ? 'Voice input disabled' : listening ? 'Listening for microphone input' : 'Use voice input'} disabled={!voiceEnabled} onClick={startListening}><Mic /></button>
           <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { respond(input); setInput('') } }} placeholder={listening ? 'Listening… microphone permission may be required' : 'Type your question'} />
           <button className="send-button" aria-label="Send message" onClick={() => { respond(input); setInput('') }}>Send</button>
         </div>
-        <div className="voice-actions"><button onClick={speakLast}><Volume2 size={16} /> Read last response</button><button onClick={() => window.speechSynthesis?.cancel()}><X size={16} /> Stop speaking</button></div>
+        <div className="voice-actions"><button disabled={!voiceEnabled} onClick={speakLast}><Volume2 size={16} /> Read last response</button><button onClick={() => window.speechSynthesis?.cancel()}><X size={16} /> Stop speaking</button></div>
       </div>
       <aside className="suggested-card"><h3>Suggested questions</h3>{suggested.map(question => <button key={question} onClick={() => respond(question)}>{question}<ChevronRight /></button>)}</aside>
     </section>
