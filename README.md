@@ -60,10 +60,19 @@ Use **Reset demo data** on the welcome page or staff settings page. This restore
 
 ## Project structure
 
-- `src/App.tsx` - application shell and all portal pages
+- `src/App.tsx` - application shell, portals and management workflows
 - `src/App.css` - responsive interface styles
 - `src/data.ts` - fictional demo records
 - `src/storage.ts` - LocalStorage data management
-- `src/translations.ts` - interface translations
+- `src/translations.ts` - curated English, Afrikaans and isiXhosa interface copy
+- `src/types.ts` - shared TypeScript models
 - `src/index.css` - global design tokens
+
+## Add a language
+
+Add the language code and its curated translation object to `src/translations.ts`, then add that option to the two language selectors and speech settings.
+
+## Simulated features
+
+The chatbot uses a modular curated response engine. SMS and WhatsApp delivery, voice recognition, appointments and all beneficiary records are demonstrations only. No real AI, authentication, medical database or paid service is connected.
 N
