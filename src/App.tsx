@@ -296,7 +296,7 @@ function Assistant({ language, data, updateData }: { language: Language; data: D
     } else if (/clinic day|next.*clinic|appointment/.test(lower)) {
       answer = 'The fictional next clinic day is 1 December 2026. This demonstration does not invent or access real appointments; please confirm all appointment details with clinic staff.'
     } else if (/open|hours/.test(lower)) {
-      answer = 'The fictional Hope Exchange Community Clinic is open Monday to Friday from 08:00 to 16:00. It is closed on weekends and public holidays.'
+      answer = 'The fictional Hope Exchange Community Clinic is open Monday to Friday from 09:00 to 16:00. It is closed on weekends and public holidays.'
     } else if (/medication|collect/.test(lower)) {
       answer = 'The next fictional medication collection is 2 December 2026 at the Hope Exchange Community Clinic. I cannot change or recommend medication doses; follow your prescription and ask a healthcare professional about it.'
     } else if (/location|where/.test(lower)) {
@@ -373,7 +373,7 @@ function HealthcareInformation({ data }: { data: DemoData }) {
     <section>
       <div className="section-heading"><div><span className="eyebrow">Fictional clinic information</span><h2>Healthcare information</h2></div></div>
       <div className="detail-grid">
-        <article className="info-card"><Activity /><h3>Operating hours</h3><p>Monday–Friday: 08:00–16:00</p></article>
+        <article className="info-card"><Activity /><h3>Operating hours</h3><p>Monday–Friday: 09:00–16:00</p></article>
         <article className="info-card"><Stethoscope /><h3>Available services</h3><p>Consultations, medication collection, screening and health education</p></article>
         <article className="info-card"><Phone /><h3>Clinic contact</h3><p>021 555 0100 · Fictional demo number</p></article>
       </div>
@@ -558,7 +558,7 @@ function ReminderManager({ data, updateData, notify }: { data: DemoData; updateD
 function ScheduleManager({ data, updateData, notify }: { data: DemoData; updateData: (data: DemoData) => void; notify: (message: string) => void }) {
   const [name, setName] = useState('')
   const [date, setDate] = useState('2026-12-15')
-  const [hours, setHours] = useState('08:00-16:00')
+  const [hours, setHours] = useState('09:00-16:00')
   const [location, setLocation] = useState('Hope Exchange Community Clinic')
   const add = () => {
     if (!name.trim()) return notify('Event name is required')
