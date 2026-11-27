@@ -5,8 +5,8 @@ A community-centred healthcare information and appointment support demonstration
 ## Features
 
 - Beneficiary portal and staff administration dashboard
-- English, Afrikaans and isiXhosa language selection
-- Simulated multilingual healthcare assistant
+- English, Afrikaans and isiXhosa translations across beneficiary and staff interfaces
+- Curated multilingual healthcare assistant responses and seeded clinic content
 - Welcome-page voice mode toggle and browser voice controls with support fallbacks
 - Appointment, medication reminder and announcement management
 - LocalStorage persistence
@@ -50,6 +50,7 @@ Before deploying, enable GitHub Pages in repository settings and set the source 
 ## Demo limitations
 
 - The chatbot uses curated, simulated responses.
+- Staff-authored announcements require English, Afrikaans and isiXhosa text. Other free-text demo records remain in the language they were entered.
 - SMS and WhatsApp reminders are simulated.
 - Voice features depend on browser Web Speech API support and microphone permission.
 - LocalStorage is not a secure database or shared backend.
