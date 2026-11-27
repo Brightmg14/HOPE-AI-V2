@@ -24,7 +24,8 @@ Open the address shown by Vite, usually `http://localhost:5173`.
 
 ## Demo access
 
-This demonstration does not require authentication.
+This demonstration has a role-specific login screen but does not authenticate users.
+Enter any email address and password to continue; credentials are not checked or saved.
 
 - Choose **Continue as Beneficiary** to open the beneficiary portal.
 - Choose **Continue as Staff** to open the clinic administration dashboard.

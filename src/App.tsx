@@ -126,6 +126,8 @@ function Landing({ language, setLanguage, enterPortal, toast }: {
   enterPortal: (role: Role) => void
   toast: string
 }) {
+  const [loginRole, setLoginRole] = useState<Role | null>(null)
+
   return (
     <div className="landing">
       <header className="landing-header">
@@ -136,12 +138,40 @@ function Landing({ language, setLanguage, enterPortal, toast }: {
         <section className="hero-copy">
           <h2 className="hello-greeting">Welcome</h2>
           <div className="portal-actions">
-            <button className="primary-action" onClick={() => enterPortal('beneficiary')}><Users /><span>{t(language, 'beneficiary')}</span><ChevronRight /></button>
-            <button className="secondary-action" onClick={() => enterPortal('staff')}><Stethoscope /><span>{t(language, 'staff')}</span><ChevronRight /></button>
+            <button className="primary-action" onClick={() => setLoginRole('beneficiary')}><Users /><span><small>For community members</small>{t(language, 'beneficiary')}</span><ChevronRight /></button>
+            <button className="secondary-action" onClick={() => setLoginRole('staff')}><Stethoscope /><span><small>For clinic teams</small>{t(language, 'staff')}</span><ChevronRight /></button>
           </div>
         </section>
       </main>
       {toast && <div className="toast">{toast}</div>}
+      {loginRole && (
+        <div className="login-backdrop" onClick={() => setLoginRole(null)}>
+          <section className="login-dialog" role="dialog" aria-modal="true" aria-labelledby="login-title" onClick={event => event.stopPropagation()}>
+            <div className="login-heading">
+              <div>
+                <span className="eyebrow">{t(language, 'demoLogin')}</span>
+                <h2 id="login-title">{t(language, loginRole === 'beneficiary' ? 'beneficiaryLoginTitle' : 'staffLoginTitle')}</h2>
+              </div>
+              <button className="icon-btn" type="button" aria-label={t(language, 'close')} onClick={() => setLoginRole(null)}><X size={18} /></button>
+            </div>
+            <form className="login-fields" onSubmit={event => {
+              event.preventDefault()
+              enterPortal(loginRole)
+            }}>
+              <label className="field-label">
+                {t(language, 'email')}
+                <input type="email" autoComplete="email" required />
+              </label>
+              <label className="field-label">
+                {t(language, 'password')}
+                <input type="password" autoComplete="current-password" required />
+              </label>
+              <p className="login-note">{t(language, 'demoLoginNote')}</p>
+              <button className="button button-primary login-submit" type="submit">{t(language, 'login')}</button>
+            </form>
+          </section>
+        </div>
+      )}
     </div>
   )
 }
@@ -248,7 +278,7 @@ function Assistant({ language, data, updateData }: { language: Language; data: D
     } else if (/clinic day|next.*clinic|appointment/.test(lower)) {
       answer = 'The fictional next clinic day is 1 December 2026. This demonstration does not invent or access real appointments; please confirm all appointment details with clinic staff.'
     } else if (/open|hours/.test(lower)) {
-      answer = 'The fictional Hope Exchange Community Clinic is open Monday to Friday from 08:00 to 16:00. It is closed on weekends and public holidays.'
+      answer = 'The fictional Hope Exchange Community Clinic is open Monday to Friday from 09:00 to 16:00. It is closed on weekends and public holidays.'
     } else if (/medication|collect/.test(lower)) {
       answer = 'The next fictional medication collection is 2 December 2026 at the Hope Exchange Community Clinic. I cannot change or recommend medication doses; follow your prescription and ask a healthcare professional about it.'
     } else if (/location|where/.test(lower)) {
@@ -325,7 +355,7 @@ function HealthcareInformation({ data }: { data: DemoData }) {
     <section>
       <div className="section-heading"><div><span className="eyebrow">Fictional clinic information</span><h2>Healthcare information</h2></div></div>
       <div className="detail-grid">
-        <article className="info-card"><Activity /><h3>Operating hours</h3><p>Monday–Friday: 08:00–16:00</p></article>
+        <article className="info-card"><Activity /><h3>Operating hours</h3><p>Monday–Friday: 09:00–16:00</p></article>
         <article className="info-card"><Stethoscope /><h3>Available services</h3><p>Consultations, medication collection, screening and health education</p></article>
         <article className="info-card"><Phone /><h3>Clinic contact</h3><p>021 555 0100 · Fictional demo number</p></article>
       </div>
@@ -510,7 +540,7 @@ function ReminderManager({ data, updateData, notify }: { data: DemoData; updateD
 function ScheduleManager({ data, updateData, notify }: { data: DemoData; updateData: (data: DemoData) => void; notify: (message: string) => void }) {
   const [name, setName] = useState('')
   const [date, setDate] = useState('2026-12-15')
-  const [hours, setHours] = useState('08:00-16:00')
+  const [hours, setHours] = useState('09:00-16:00')
   const [location, setLocation] = useState('Hope Exchange Community Clinic')
   const add = () => {
     if (!name.trim()) return notify('Event name is required')
